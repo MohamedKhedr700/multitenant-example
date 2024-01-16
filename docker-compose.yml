@@ -36,7 +36,7 @@ services:
             MYSQL_ALLOW_EMPTY_PASSWORD: 1
         volumes:
             - 'sail-mysql:/var/lib/mysql'
-            - './docker/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
+            - './docker/mysql/add-privileges-database.sh:/docker-entrypoint-initdb.d/10-add-privileges-database.sh'
         networks:
             - sail
         healthcheck:
@@ -55,6 +55,8 @@ services:
         environment:
             PMA_HOST: '${DB_HOST:-mysql}'
             MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+        volumes:
+            - ./docker/phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
         depends_on:
             - mysql
         networks:
