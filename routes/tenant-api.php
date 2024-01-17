@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\TenantController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -31,4 +30,4 @@ Route::prefix('v1')
 
             return 'The id of the current tenant is '.tenant('id');
         });
-});
+    });
