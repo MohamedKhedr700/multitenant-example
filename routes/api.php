@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\TenantController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +14,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::prefix('v1/dashboard/tenants')
+    ->group(function () {
+        // store tenant
+        Route::post('/', [TenantController::class, 'store']);
+        // list tenants
+        Route::get('/', [TenantController::class, 'index']);
+        // show tenant
+        Route::get('/{tenant}', [TenantController::class, 'show']);
+        // update tenant
+        Route::put('/{tenant}', [TenantController::class, 'update']);
+        // delete tenant
+        Route::delete('/{tenant}', [TenantController::class, 'delete']);
+    });
