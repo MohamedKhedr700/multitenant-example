@@ -25,10 +25,68 @@ class RouteServiceProvider extends ServiceProvider
         $this->configureRateLimiting();
 
         $this->routes(function () {
+            $this->mapDomainRoutes();
             $this->mapApiRoutes();
             $this->mapWebRoutes();
             $this->mapTenantApiRoutes();
         });
+    }
+
+    private function mapDomainRoutes(): void
+    {
+        $domains = glob(app_path('Domain/*'));
+
+        foreach ($domains as $domainPath) {
+            $domainRoutes = $this->getDomainRoutes($domainPath);
+            $domainApiRoutes = $this->getDomainApiRoutes($domainPath);
+
+            $this->discover($domainRoutes);
+
+            $this->discoverApi($domainApiRoutes);
+
+        }
+    }
+
+    /**
+     * Get domain api routes.
+     */
+    private function getDomainRoutes(string $domainPath): array
+    {
+        return [
+            $domainPath.'/routes/web.php',
+            $domainPath.'/routes/tenant.php',
+        ];
+    }
+
+    /**
+     * Get domain api routes.
+     */
+    private function getDomainApiRoutes(string $domainPath): array
+    {
+        return [
+            $domainPath.'/routes/api.php',
+            $domainPath.'/routes/tenant-api.php',
+        ];
+    }
+
+    /**
+     * Discover path routes.
+     */
+    private function discover(array $routes, string $prefix = '/'): void
+    {
+        foreach ($routes as $path) {
+            if (file_exists($path)) {
+                Route::prefix($prefix)->group($path);
+            }
+        }
+    }
+
+    /**
+     * Discover path routes.
+     */
+    private function discoverApi(array $routes): void
+    {
+        $this->discover($routes, 'api');
     }
 
     /**

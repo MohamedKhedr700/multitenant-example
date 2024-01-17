@@ -18,17 +18,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('v1')
+Route::prefix('v1/dashboard/users')
     ->middleware(['tenant_api'])
     ->group(function () {
-        Route::get('/', function () {
-
-            foreach (User::all(['id', 'name']) as $user) {
-                echo $user;
-                echo '<br>';
-                echo '<br>';
-            }
-
-            return 'The id of the current tenant is '.tenant('id');
-        });
+        // store user
+        Route::post('/', [UserController::class, 'store']);
+        // list users
+        Route::get('/', [UserController::class, 'index']);
+        // show user
+        Route::get('/{user}', [UserController::class, 'show']);
+        // update user
+        Route::put('/{user}', [UserController::class, 'update']);
+        // delete user
+        Route::delete('/{user}', [UserController::class, 'delete']);
     });

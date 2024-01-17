@@ -2,29 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Tenant\Requests\StoreTenantRequest;
-use App\Domain\Tenant\Requests\UpdateTenantRequest;
+use App\Domain\Admin\Requests\StoreAdminRequest;
+use App\Domain\Admin\Requests\UpdateAdminRequest;
+use App\Http\Requests\StoreTenantRequest;
+use App\Http\Requests\UpdateTenantRequest;
+use App\Models\Admin;
 use App\Models\Tenant;
 use Illuminate\Http\JsonResponse;
 
-class TenantController extends Controller
+class AdminController extends Controller
 {
     /**
-     * Create tenant.
+     * Create an admin.
      */
-    public function store(StoreTenantRequest $request): JsonResponse
+    public function store(StoreAdminRequest $request): JsonResponse
     {
         $tenant = Tenant::create(['id' => $request->input('name')]);
 
         $tenant->domains()->create($request->only(['domain']));
 
         return response()->json([
-            'message' => __('Tenant created successfully'),
+            'message' => __('Admin created successfully'),
         ]);
     }
 
     /**
-     * List tenants.
+     * List admins.
      */
     public function index(): JsonResponse
     {
@@ -36,7 +39,7 @@ class TenantController extends Controller
     }
 
     /**
-     * Show a tenant.
+     * Show an admin.
      */
     public function show(Tenant $tenant): JsonResponse
     {
@@ -46,26 +49,26 @@ class TenantController extends Controller
     }
 
     /**
-     * Update a tenant.
+     * Update an admin.
      */
-    public function update(UpdateTenantRequest $request, Tenant $tenant): JsonResponse
+    public function update(UpdateAdminRequest $request, Tenant $tenant): JsonResponse
     {
         $tenant->update(['id' => $request->input('name')]);
 
         return response()->json([
-            'message' => __('Tenant updated successfully'),
+            'message' => __('Admin updated successfully'),
         ]);
     }
 
     /**
-     * Delete a tenant.
+     * Delete an admin.
      */
-    public function delete(Tenant $tenant): JsonResponse
+    public function delete(Admin $admin): JsonResponse
     {
-        $tenant->delete();
+        $admin->delete();
 
         return response()->json([
-            'message' => __('Tenant deleted successfully'),
+            'message' => __('Admin deleted successfully'),
         ]);
     }
 }
