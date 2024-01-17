@@ -25,10 +25,9 @@ class RouteServiceProvider extends ServiceProvider
         $this->configureRateLimiting();
 
         $this->routes(function () {
+            $this->mapApiRoutes();
+            $this->mapWebRoutes();
             $this->mapTenantApiRoutes();
-            $this->mapTenantWebRoutes();
-//            $this->mapApiRoutes();
-//            $this->mapWebRoutes();
         });
     }
 
@@ -47,8 +46,11 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapWebRoutes(): void
     {
-        Route::middleware('web')
-            ->group(base_path('routes/web.php'));
+        foreach ($this->centralDomains() as $domain) {
+            Route::middleware('web')
+                ->domain($domain)
+                ->group(base_path('routes/web.php'));
+        }
     }
 
     /**
@@ -56,21 +58,11 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapApiRoutes(): void
     {
-        Route::middleware('api')
-            ->prefix('api')
-            ->group(base_path('routes/api.php'));
-    }
-
-    /**
-     * Map tenant web routes.
-     */
-    protected function mapTenantWebRoutes(): void
-    {
         foreach ($this->centralDomains() as $domain) {
-            Route::middleware('web')
+            Route::middleware('api')
+                ->prefix('api')
                 ->domain($domain)
-                ->namespace($this->namespace)
-                ->group(base_path('routes/web.php'));
+                ->group(base_path('routes/api.php'));
         }
     }
 
@@ -79,12 +71,9 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapTenantApiRoutes(): void
     {
-        foreach ($this->centralDomains() as $domain) {
+        if (file_exists(base_path('routes/tenant-api.php'))) {
             Route::prefix('api')
-                ->domain($domain)
-                ->middleware('api')
-                ->namespace($this->namespace)
-                ->group(base_path('routes/api.php'));
+                ->group(base_path('routes/tenant-api.php'));
         }
     }
 

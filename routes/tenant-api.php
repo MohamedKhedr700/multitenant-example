@@ -18,8 +18,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('/')
-    ->middleware(['tenant_web'])
+Route::prefix('v1')
+    ->middleware(['tenant_api'])
     ->group(function () {
         Route::get('/', function () {
 
